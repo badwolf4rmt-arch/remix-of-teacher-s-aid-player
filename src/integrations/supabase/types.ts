@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      evaluations: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          markup_ok: boolean | null
+          model: string | null
+          overall_stars: number | null
+          params: Json | null
+          scores: Json | null
+          task_content: string | null
+          teacher_notes: string | null
+          user_name: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          markup_ok?: boolean | null
+          model?: string | null
+          overall_stars?: number | null
+          params?: Json | null
+          scores?: Json | null
+          task_content?: string | null
+          teacher_notes?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          markup_ok?: boolean | null
+          model?: string | null
+          overall_stars?: number | null
+          params?: Json | null
+          scores?: Json | null
+          task_content?: string | null
+          teacher_notes?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
