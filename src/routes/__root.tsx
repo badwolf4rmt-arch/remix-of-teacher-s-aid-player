@@ -77,14 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Стенд генерации заданий" },
+      {
+        name: "description",
+        content:
+          "Внутренний стенд: задание параметров, плеер контента с markdown/LaTeX и панель оценивания.",
+      },
+      { property: "og:title", content: "Стенд генерации заданий" },
+      {
+        property: "og:description",
+        content: "Плеер контента для просмотра заданий и заметок учителя с оцениванием.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
