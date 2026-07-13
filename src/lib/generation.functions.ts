@@ -48,12 +48,29 @@ export const generateTask = createServerFn({ method: "POST" })
         { role: "system", content: data.systemPrompt },
         { role: "user", content: userMsg },
       ],
+      response_format: { type: "json_object" },
     });
     const full: string = res?.choices?.[0]?.message?.content ?? "";
-    const [task, notes] = full.split(/---TEACHER-NOTES---/i);
+    // Strip accidental code fences
+    const cleaned = full.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+    let task = "";
+    let notes = "";
+    let taskFormat = "";
+    try {
+      const parsed = JSON.parse(cleaned);
+      taskFormat = String(parsed.task_format ?? "").trim();
+      task = String(parsed?.task?.content ?? "").trim();
+      notes = String(parsed?.teacher_notes ?? "").trim();
+    } catch {
+      // Fallback: legacy split
+      const [t, n] = cleaned.split(/---TEACHER-NOTES---/i);
+      task = (t || cleaned).trim();
+      notes = (n || "").trim();
+    }
     return {
-      task: (task || full).trim(),
-      notes: (notes || "").trim() || "_Заметки для учителя не были возвращены моделью._",
+      task: task || "_Модель вернула пустое задание._",
+      notes: notes || "_Заметки для учителя не были возвращены моделью._",
+      taskFormat,
     };
   });
 
