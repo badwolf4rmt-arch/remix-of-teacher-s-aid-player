@@ -1,14 +1,23 @@
 import type { FormDraft } from "./catalogs";
+import {
+  DEFAULT_PROMPT_STAGE1,
+  DEFAULT_PROMPT_STAGE2,
+  DEFAULT_PROMPT_STAGE3,
+} from "./defaultPrompts";
 
 export type ModelId = "claude" | "gemini";
 
 export type PromptSettings = {
-  stage1: string; // задание и заметки
-  stage2: string; // запрос на изображение
-  stage3: string; // генерация изображения
+  stage1: string;
+  stage2: string;
+  stage3: string;
 };
 
-export const DEFAULT_PROMPTS: PromptSettings = { stage1: "", stage2: "", stage3: "" };
+export const DEFAULT_PROMPTS: PromptSettings = {
+  stage1: DEFAULT_PROMPT_STAGE1,
+  stage2: DEFAULT_PROMPT_STAGE2,
+  stage3: DEFAULT_PROMPT_STAGE3,
+};
 
 const PARAMS_KEY = "player.params";
 const USER_KEY = "player.user";
@@ -52,7 +61,12 @@ export function loadPrompts(): PromptSettings {
   const raw = localStorage.getItem(PROMPTS_KEY);
   if (!raw) return DEFAULT_PROMPTS;
   try {
-    return { ...DEFAULT_PROMPTS, ...JSON.parse(raw) };
+    const stored = JSON.parse(raw) as Partial<PromptSettings>;
+    return {
+      stage1: stored.stage1?.trim() ? stored.stage1 : DEFAULT_PROMPTS.stage1,
+      stage2: stored.stage2?.trim() ? stored.stage2 : DEFAULT_PROMPTS.stage2,
+      stage3: stored.stage3?.trim() ? stored.stage3 : DEFAULT_PROMPTS.stage3,
+    };
   } catch {
     return DEFAULT_PROMPTS;
   }
