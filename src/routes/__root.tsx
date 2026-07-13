@@ -78,19 +78,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Стенд генерации заданий" },
+      { title: "Стенд генерации мотивирующих заданий" },
       {
         name: "description",
         content:
-          "Внутренний стенд: задание параметров, плеер контента с markdown/LaTeX и панель оценивания.",
+          "Внутренний стенд для тестирования: задание параметров, плеер контента с markdown/LaTeX и панель оценивания.",
       },
-      { property: "og:title", content: "Стенд генерации заданий" },
+      { property: "og:title", content: "Стенд генерации мотивирующих заданий" },
       {
         property: "og:description",
-        content: "Плеер контента для просмотра заданий и заметок учителя с оцениванием.",
+        content: "Внутренний стенд для тестирования: задание параметров, плеер контента с markdown/LaTeX и панель оценивания.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Стенд генерации мотивирующих заданий" },
+      { name: "twitter:description", content: "Внутренний стенд для тестирования: задание параметров, плеер контента с markdown/LaTeX и панель оценивания." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6984d42d-f354-4e70-9394-fc8f734470e2/id-preview-aea164ed--c603e1c5-b34c-4f40-a729-fdfd4277efcc.lovable.app-1783924853236.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6984d42d-f354-4e70-9394-fc8f734470e2/id-preview-aea164ed--c603e1c5-b34c-4f40-a729-fdfd4277efcc.lovable.app-1783924853236.png" },
     ],
     links: [
       {
