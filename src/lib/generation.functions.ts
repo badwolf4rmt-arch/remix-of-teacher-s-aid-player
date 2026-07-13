@@ -2,6 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 
 const OR_URL = "https://openrouter.ai/api/v1/chat/completions";
 
+type Usage = {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
+  cost?: number;
+};
+
 async function callOpenRouter(body: Record<string, unknown>) {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error("Missing OPENROUTER_API_KEY");
@@ -13,11 +20,21 @@ async function callOpenRouter(body: Record<string, unknown>) {
       "HTTP-Referer": "https://lovable.dev",
       "X-Title": "Motivation Task Stand",
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, usage: { include: true } }),
   });
   const text = await r.text();
   if (!r.ok) throw new Error(`OpenRouter ${r.status}: ${text.slice(0, 500)}`);
   return JSON.parse(text);
+}
+
+function extractUsage(res: unknown): Usage {
+  const u = (res as { usage?: Usage })?.usage ?? {};
+  return {
+    prompt_tokens: u.prompt_tokens,
+    completion_tokens: u.completion_tokens,
+    total_tokens: u.total_tokens,
+    cost: typeof u.cost === "number" ? u.cost : undefined,
+  };
 }
 
 type GenTaskInput = {
@@ -51,7 +68,6 @@ export const generateTask = createServerFn({ method: "POST" })
       response_format: { type: "json_object" },
     });
     const full: string = res?.choices?.[0]?.message?.content ?? "";
-    // Strip accidental code fences
     const cleaned = full.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
     let task = "";
     let notes = "";
@@ -62,7 +78,6 @@ export const generateTask = createServerFn({ method: "POST" })
       task = String(parsed?.task?.content ?? "").trim();
       notes = String(parsed?.teacher_notes ?? "").trim();
     } catch {
-      // Fallback: legacy split
       const [t, n] = cleaned.split(/---TEACHER-NOTES---/i);
       task = (t || cleaned).trim();
       notes = (n || "").trim();
@@ -72,6 +87,7 @@ export const generateTask = createServerFn({ method: "POST" })
       notes: notes || "_Заметки для учителя не были возвращены моделью._",
       taskFormat,
       raw: full,
+      usage: extractUsage(res),
     };
   });
 
@@ -103,7 +119,7 @@ export const generateImageBrief = createServerFn({ method: "POST" })
       response_format: { type: "json_object" },
     });
     const content: string = res?.choices?.[0]?.message?.content ?? "{}";
-    return { brief: content.trim() };
+    return { brief: content.trim(), usage: extractUsage(res) };
   });
 
 type GenImageInput = {
@@ -124,11 +140,10 @@ export const generateImage = createServerFn({ method: "POST" })
       modalities: ["image", "text"],
     });
     const msg = res?.choices?.[0]?.message ?? {};
-    // OpenRouter returns generated images in message.images[].image_url.url as data URL
     const images: Array<{ image_url?: { url?: string } }> = msg.images ?? [];
     const url = images[0]?.image_url?.url;
     if (!url) {
       throw new Error("Модель не вернула изображение. " + (msg.content || "").slice(0, 300));
     }
-    return { imageUrl: url };
+    return { imageUrl: url, usage: extractUsage(res) };
   });
