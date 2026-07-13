@@ -94,7 +94,7 @@ export function RegenerateDialog({
               type="button"
               className="h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => {
-                toast.info("Генерация будет подключена к ИИ");
+                onSubmit?.({ format, withIllustration, additionalRequest: instructions });
                 onOpenChange(false);
               }}
             >
