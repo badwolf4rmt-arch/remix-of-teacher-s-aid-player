@@ -4,11 +4,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { PlayerHeader } from "@/components/PlayerHeader";
+import { AppHeader } from "@/components/AppHeader";
 import { PlayerToolbar } from "@/components/PlayerToolbar";
-import { BottomActions } from "@/components/BottomActions";
 import { RegenerateDialog } from "@/components/RegenerateDialog";
-import { EvaluationSheet } from "@/components/EvaluationSheet";
+import { EvaluationPanel } from "@/components/EvaluationPanel";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import {
   DEFAULT_PROMPTS,
@@ -42,7 +41,6 @@ function PlayerPage() {
   const [prompts, setPrompts] = useState<PromptSettings>(DEFAULT_PROMPTS);
   const [params, setParams] = useState<FormDraft | null>(null);
   const [regenOpen, setRegenOpen] = useState(false);
-  const [evalOpen, setEvalOpen] = useState(false);
 
   const [stage, setStage] = useState<Stage>("idle");
   const [taskContent, setTaskContent] = useState("");
@@ -137,98 +135,104 @@ function PlayerPage() {
   };
 
   const formatLabel = TASK_FORMATS.find((f) => f.id === params?.format)?.label || "Кейс";
+  const busy = stage === "task" || stage === "brief" || stage === "image";
 
   return (
     <div className="min-h-screen bg-background">
-      <PlayerHeader
+      <AppHeader
         userName={userName}
-        onUserChange={(v) => {
-          setUserName(v);
-          saveUser(v);
-        }}
+        onUserChange={(v) => { setUserName(v); saveUser(v); }}
         model={model}
-        onModelChange={(v) => {
-          setModel(v);
-          saveModel(v);
-        }}
+        onModelChange={(v) => { setModel(v); saveModel(v); }}
         prompts={prompts}
         onPromptsChange={setPrompts}
-        onOpenEvaluation={() => setEvalOpen(true)}
       />
 
       <PlayerToolbar />
 
-      <main className="mx-auto max-w-[1400px] px-8 py-8 pb-32">
-        <div className="mb-4 flex items-center gap-4 border-b border-border/60 pb-4 text-sm">
-          <span className="text-muted-foreground">{params?.subject || "Предмет"}</span>
-          <span className="text-muted-foreground">
-            {params?.grade ? `${params.grade} параллель` : "Параллель"}
-          </span>
-        </div>
+      <main className="mx-auto max-w-[1600px] px-6 py-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,2fr)_minmax(0,1fr)]">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <EvaluationPanel
+              userName={userName}
+              model={model}
+              params={params}
+              taskContent={taskContent}
+              teacherNotes={notesContent}
+            />
+          </aside>
 
-        <h1 className="mb-6 text-3xl font-semibold text-foreground">
-          {params?.topic || "Тема задания"}
-        </h1>
-
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <section className="relative rounded-2xl border-2 border-primary/40 bg-card p-6 shadow-sm">
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
-                Мотивирующее задание
+          <section className="min-w-0">
+            <div className="mb-4 flex items-center gap-4 border-b border-border/60 pb-4 text-sm">
+              <span className="text-muted-foreground">{params?.subject || "Предмет"}</span>
+              <span className="text-muted-foreground">
+                {params?.grade ? `${params.grade} параллель` : "Параллель"}
               </span>
-              <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
-                {formatLabel}
-              </span>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
-                onClick={() => setRegenOpen(true)}
-                disabled={stage === "task" || stage === "brief" || stage === "image"}
-              >
-                <RefreshCw className="h-4 w-4" />
-                Перегенерировать
-              </Button>
             </div>
 
-            {imageUrl && (
-              <img
-                src={imageUrl}
-                alt="Иллюстрация к заданию"
-                className="mb-4 w-full rounded-xl border border-border/60"
-              />
-            )}
+            <h1 className="mb-6 text-3xl font-semibold text-foreground">
+              {params?.topic || "Тема задания"}
+            </h1>
 
-            {stage === "task" && <StageLoader label="Генерирую задание и заметки…" />}
-            {stage === "brief" && taskContent && (
-              <>
+            <div className="relative rounded-2xl border-2 border-primary/40 bg-card p-6 shadow-sm">
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
+                  Мотивирующее задание
+                </span>
+                <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
+                  {formatLabel}
+                </span>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
+                  onClick={() => setRegenOpen(true)}
+                  disabled={busy}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Перегенерировать
+                </Button>
+              </div>
+
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Иллюстрация к заданию"
+                  className="mb-4 w-full rounded-xl border border-border/60"
+                />
+              )}
+
+              {stage === "task" && <StageLoader label="Генерирую задание и заметки…" />}
+              {stage === "brief" && taskContent && (
+                <>
+                  <MarkdownContent content={taskContent} />
+                  <StageLoader label="Составляю бриф иллюстрации…" />
+                </>
+              )}
+              {stage === "image" && taskContent && (
+                <>
+                  <MarkdownContent content={taskContent} />
+                  <StageLoader label="Рисую иллюстрацию…" />
+                </>
+              )}
+              {(stage === "done" || stage === "error") && taskContent && (
                 <MarkdownContent content={taskContent} />
-                <StageLoader label="Составляю бриф иллюстрации…" />
-              </>
-            )}
-            {stage === "image" && taskContent && (
-              <>
-                <MarkdownContent content={taskContent} />
-                <StageLoader label="Рисую иллюстрацию…" />
-              </>
-            )}
-            {(stage === "done" || stage === "error") && taskContent && (
-              <MarkdownContent content={taskContent} />
-            )}
-            {stage === "error" && !taskContent && (
-              <p className="text-sm text-destructive">{stageError}</p>
-            )}
-            {stage === "idle" && !params && (
-              <p className="text-sm text-muted-foreground">
-                Задайте параметры на главной, чтобы запустить генерацию.
-              </p>
-            )}
+              )}
+              {stage === "error" && !taskContent && (
+                <p className="text-sm text-destructive">{stageError}</p>
+              )}
+              {stage === "idle" && !params && (
+                <p className="text-sm text-muted-foreground">
+                  Задайте параметры на главной, чтобы запустить генерацию.
+                </p>
+              )}
+            </div>
           </section>
 
-          <aside>
-            <h2 className="mb-4 text-lg font-semibold text-foreground">Заметки для учителя</h2>
-            <div className="border-t border-border/60 pt-4">
+          <aside className="min-w-0">
+            <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold text-foreground">Заметки для учителя</h2>
               {notesContent ? (
                 <MarkdownContent content={notesContent} />
               ) : stage === "task" ? (
@@ -243,24 +247,12 @@ function PlayerPage() {
         </div>
       </main>
 
-      <BottomActions />
-
       <RegenerateDialog
         open={regenOpen}
         onOpenChange={setRegenOpen}
         defaultFormat={params?.format || "any"}
         defaultWithIllustration={params?.withIllustration ?? true}
         onSubmit={handleRegenerate}
-      />
-
-      <EvaluationSheet
-        open={evalOpen}
-        onOpenChange={setEvalOpen}
-        userName={userName}
-        model={model}
-        params={params}
-        taskContent={taskContent}
-        teacherNotes={notesContent}
       />
     </div>
   );
