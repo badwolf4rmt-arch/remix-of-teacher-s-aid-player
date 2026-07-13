@@ -197,6 +197,16 @@ function PlayerPage() {
                   variant="ghost"
                   size="sm"
                   className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
+                  onClick={() => setJsonOpen(true)}
+                  disabled={!rawStage1 && !rawStage2}
+                >
+                  <Braces className="h-4 w-4" />
+                  Показать чистый JSON
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 rounded-lg text-muted-foreground hover:bg-muted"
                   onClick={() => setRegenOpen(true)}
                   disabled={busy}
                 >
