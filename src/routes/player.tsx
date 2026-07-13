@@ -262,14 +262,24 @@ function PlayerPage() {
                 <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
                   Мотивирующее задание
                 </span>
-                <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
-                  {formatLabel}
-                </span>
+                {formatLabel && (
+                  <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
+                    {formatLabel}
+                  </span>
+                )}
 
+                {anyCost && (
+                  <span
+                    className="ml-auto rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground"
+                    title={`Задание: ${fmtUsd(costTask ?? 0)} • Бриф: ${fmtUsd(costBrief ?? 0)} • Картинка: ${fmtUsd(costImage ?? 0)}`}
+                  >
+                    Стоимость: {fmtUsd(totalCost)}
+                  </span>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
+                  className={`${anyCost ? "" : "ml-auto"} gap-2 rounded-lg text-muted-foreground hover:bg-muted`}
                   onClick={() => setJsonOpen(true)}
                   disabled={!rawStage1 && !rawStage2}
                 >
