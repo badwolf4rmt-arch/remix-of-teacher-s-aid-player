@@ -102,6 +102,7 @@ function PlayerPage() {
             studentTask: t.task,
           },
         });
+        setRawStage2(b.brief ?? "");
 
         setStage("image");
         const img = await genImage({
