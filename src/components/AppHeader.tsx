@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { savePrompts, type ModelId, type PromptSettings } from "@/lib/playerState";
+import { DEFAULT_PROMPTS, savePrompts, type ModelId, type PromptSettings } from "@/lib/playerState";
 
 type Props = {
   userName: string;
@@ -110,15 +110,24 @@ export function AppHeader({
                   </div>
                 ))}
 
-                <Button
-                  className="w-full"
-                  onClick={() => {
-                    onPromptsChange(draft);
-                    savePrompts(draft);
-                  }}
-                >
-                  Сохранить
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setDraft(DEFAULT_PROMPTS)}
+                  >
+                    Сбросить по умолчанию
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      onPromptsChange(draft);
+                      savePrompts(draft);
+                    }}
+                  >
+                    Сохранить
+                  </Button>
+                </div>
               </div>
             </SheetContent>
           </Sheet>

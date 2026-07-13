@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, Maximize2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
@@ -9,6 +9,8 @@ import { PlayerToolbar } from "@/components/PlayerToolbar";
 import { RegenerateDialog } from "@/components/RegenerateDialog";
 import { EvaluationPanel } from "@/components/EvaluationPanel";
 import { MarkdownContent } from "@/components/MarkdownContent";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
   DEFAULT_PROMPTS,
   loadModel,
@@ -46,6 +48,7 @@ function PlayerPage() {
   const [taskContent, setTaskContent] = useState("");
   const [notesContent, setNotesContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageOpen, setImageOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
 
   const genTask = useServerFn(generateTask);
@@ -196,11 +199,24 @@ function PlayerPage() {
               </div>
 
               {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt="Иллюстрация к заданию"
-                  className="mb-4 w-full rounded-xl border border-border/60"
-                />
+                <div className="relative mb-4 group">
+                  <img
+                    src={imageUrl}
+                    alt="Иллюстрация к заданию"
+                    className="w-full cursor-zoom-in rounded-xl border border-border/60"
+                    onClick={() => setImageOpen(true)}
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute right-2 top-2 h-8 w-8 rounded-lg opacity-90 shadow"
+                    onClick={() => setImageOpen(true)}
+                    aria-label="Открыть на весь экран"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
 
               {stage === "task" && <StageLoader label="Генерирую задание и заметки…" />}
@@ -254,6 +270,21 @@ function PlayerPage() {
         defaultWithIllustration={params?.withIllustration ?? true}
         onSubmit={handleRegenerate}
       />
+
+      <Dialog open={imageOpen} onOpenChange={setImageOpen}>
+        <DialogContent className="max-w-[95vw] border-0 bg-black/95 p-2 sm:max-w-[95vw]">
+          <VisuallyHidden>
+            <DialogTitle>Иллюстрация к заданию</DialogTitle>
+          </VisuallyHidden>
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Иллюстрация к заданию"
+              className="mx-auto max-h-[90vh] w-auto max-w-full rounded-lg object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
