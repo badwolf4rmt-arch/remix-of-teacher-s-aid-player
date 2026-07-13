@@ -119,7 +119,7 @@ function PlayerPage() {
       <RegenerateDialog
         open={regenOpen}
         onOpenChange={setRegenOpen}
-        defaultFormat={params?.format ?? ""}
+        defaultFormat={params?.format || "any"}
         defaultWithIllustration={params?.withIllustration ?? true}
       />
 
