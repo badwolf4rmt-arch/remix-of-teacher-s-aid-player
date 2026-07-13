@@ -338,3 +338,13 @@ function StageLoader({ label }: { label: string }) {
     </div>
   );
 }
+
+function formatMaybeJson(s: string) {
+  const trimmed = (s ?? "").trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+  if (!trimmed) return "";
+  try {
+    return JSON.stringify(JSON.parse(trimmed), null, 2);
+  } catch {
+    return trimmed;
+  }
+}
