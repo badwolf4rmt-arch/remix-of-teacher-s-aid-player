@@ -28,6 +28,7 @@ import {
   generateImageBrief,
   generateTask,
 } from "@/lib/generation.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/player")({
   ssr: false,
@@ -86,34 +87,54 @@ function PlayerPage() {
         setNotesContent(t.notes);
         setRawStage1(t.raw ?? "");
 
-        if (!effective.withIllustration) {
-          setStage("done");
-          return;
+        let briefText = "";
+        let finalImageUrl: string | null = null;
+
+        if (effective.withIllustration) {
+          setStage("brief");
+          const b = await genBrief({
+            data: {
+              systemPrompt: pr.stage2,
+              subject: effective.subject,
+              grade: effective.grade,
+              topic: effective.topic,
+              taskFormat: TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "любой",
+              studentTask: t.task,
+            },
+          });
+          briefText = b.brief ?? "";
+          setRawStage2(briefText);
+
+          setStage("image");
+          const img = await genImage({
+            data: {
+              systemPrompt: pr.stage3,
+              imageBrief: b.brief,
+              additionalRequest: effective.additionalRequest,
+            },
+          });
+          finalImageUrl = img.imageUrl;
+          setImageUrl(finalImageUrl);
         }
 
-        setStage("brief");
-        const b = await genBrief({
-          data: {
-            systemPrompt: pr.stage2,
-            subject: effective.subject,
-            grade: effective.grade,
-            topic: effective.topic,
-            taskFormat: TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "любой",
-            studentTask: t.task,
-          },
-        });
-        setRawStage2(b.brief ?? "");
-
-        setStage("image");
-        const img = await genImage({
-          data: {
-            systemPrompt: pr.stage3,
-            imageBrief: b.brief,
-            additionalRequest: effective.additionalRequest,
-          },
-        });
-        setImageUrl(img.imageUrl);
         setStage("done");
+
+        // Auto-save the generation
+        try {
+          await supabase.from("generations" as never).insert({
+            user_name: loadUser() || null,
+            model: m,
+            params: effective as unknown as Record<string, unknown>,
+            task_format: t.taskFormat || null,
+            task_content: t.task,
+            teacher_notes: t.notes,
+            raw_stage1: t.raw ?? null,
+            image_brief: briefText || null,
+            image_url: finalImageUrl,
+          } as never);
+        } catch (saveErr) {
+          console.error("Failed to save generation", saveErr);
+        }
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         setStageError(msg);
