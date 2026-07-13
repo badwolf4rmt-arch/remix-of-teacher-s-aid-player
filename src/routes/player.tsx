@@ -270,6 +270,21 @@ function PlayerPage() {
         defaultWithIllustration={params?.withIllustration ?? true}
         onSubmit={handleRegenerate}
       />
+
+      <Dialog open={imageOpen} onOpenChange={setImageOpen}>
+        <DialogContent className="max-w-[95vw] border-0 bg-black/95 p-2 sm:max-w-[95vw]">
+          <VisuallyHidden>
+            <DialogTitle>Иллюстрация к заданию</DialogTitle>
+          </VisuallyHidden>
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Иллюстрация к заданию"
+              className="mx-auto max-h-[90vh] w-auto max-w-full rounded-lg object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
