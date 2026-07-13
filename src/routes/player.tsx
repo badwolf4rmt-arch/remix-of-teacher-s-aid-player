@@ -209,8 +209,16 @@ function PlayerPage() {
     void runPipeline(params, model, prompts, { ...opts, additionalRequest: wrapped });
   };
 
-  const formatLabel = TASK_FORMATS.find((f) => f.id === params?.format)?.label || "Кейс";
+  const formatLabel =
+    displayFormat ||
+    TASK_FORMATS.find((f) => f.id === (lastFormatId ?? params?.format))?.label ||
+    "";
   const busy = stage === "task" || stage === "brief" || stage === "image";
+  const totalCost =
+    (costTask ?? 0) + (costBrief ?? 0) + (costImage ?? 0);
+  const anyCost = costTask != null || costBrief != null || costImage != null;
+  const fmtUsd = (v: number) =>
+    v >= 0.01 ? `$${v.toFixed(3)}` : `$${v.toFixed(4)}`;
 
   return (
     <div className="min-h-screen bg-background">
