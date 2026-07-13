@@ -199,11 +199,24 @@ function PlayerPage() {
               </div>
 
               {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt="Иллюстрация к заданию"
-                  className="mb-4 w-full rounded-xl border border-border/60"
-                />
+                <div className="relative mb-4 group">
+                  <img
+                    src={imageUrl}
+                    alt="Иллюстрация к заданию"
+                    className="w-full cursor-zoom-in rounded-xl border border-border/60"
+                    onClick={() => setImageOpen(true)}
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="secondary"
+                    className="absolute right-2 top-2 h-8 w-8 rounded-lg opacity-90 shadow"
+                    onClick={() => setImageOpen(true)}
+                    aria-label="Открыть на весь экран"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
 
               {stage === "task" && <StageLoader label="Генерирую задание и заметки…" />}
