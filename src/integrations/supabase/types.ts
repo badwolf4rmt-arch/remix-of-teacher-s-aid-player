@@ -58,6 +58,10 @@ export type Database = {
       }
       generations: {
         Row: {
+          cost_brief: number | null
+          cost_image: number | null
+          cost_task: number | null
+          cost_total: number | null
           created_at: string
           id: string
           image_brief: string | null
@@ -68,9 +72,16 @@ export type Database = {
           task_content: string | null
           task_format: string | null
           teacher_notes: string | null
+          tokens_brief: Json | null
+          tokens_image: Json | null
+          tokens_task: Json | null
           user_name: string | null
         }
         Insert: {
+          cost_brief?: number | null
+          cost_image?: number | null
+          cost_task?: number | null
+          cost_total?: number | null
           created_at?: string
           id?: string
           image_brief?: string | null
@@ -81,9 +92,16 @@ export type Database = {
           task_content?: string | null
           task_format?: string | null
           teacher_notes?: string | null
+          tokens_brief?: Json | null
+          tokens_image?: Json | null
+          tokens_task?: Json | null
           user_name?: string | null
         }
         Update: {
+          cost_brief?: number | null
+          cost_image?: number | null
+          cost_task?: number | null
+          cost_total?: number | null
           created_at?: string
           id?: string
           image_brief?: string | null
@@ -94,6 +112,9 @@ export type Database = {
           task_content?: string | null
           task_format?: string | null
           teacher_notes?: string | null
+          tokens_brief?: Json | null
+          tokens_image?: Json | null
+          tokens_task?: Json | null
           user_name?: string | null
         }
         Relationships: []
