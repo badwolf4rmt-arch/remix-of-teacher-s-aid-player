@@ -28,6 +28,7 @@ import {
   generateImageBrief,
   generateTask,
 } from "@/lib/generation.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/player")({
   ssr: false,
