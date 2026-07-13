@@ -364,9 +364,10 @@ function PlayerPage() {
       </main>
 
       <RegenerateDialog
+        key={`regen-${lastFormatId}-${regenOpen}`}
         open={regenOpen}
         onOpenChange={setRegenOpen}
-        defaultFormat={params?.format || "any"}
+        defaultFormat={lastFormatId}
         defaultWithIllustration={params?.withIllustration ?? true}
         onSubmit={handleRegenerate}
       />
