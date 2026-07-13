@@ -69,6 +69,7 @@ export const DEFAULT_FORM: FormDraft = {
   grade: "",
   topic: "",
   withIllustration: true,
-  format: "",
+  format: "any",
   additionalRequest: "",
 };
+
