@@ -17,13 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TASK_FORMATS, type TaskFormat } from "@/lib/catalogs";
-import { toast } from "sonner";
 
 type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   defaultFormat?: TaskFormat;
   defaultWithIllustration?: boolean;
+  onSubmit?: (opts: { format: TaskFormat; withIllustration: boolean; additionalRequest: string }) => void;
 };
 
 export function RegenerateDialog({
@@ -31,6 +31,7 @@ export function RegenerateDialog({
   onOpenChange,
   defaultFormat = "any",
   defaultWithIllustration = true,
+  onSubmit,
 }: Props) {
   const [format, setFormat] = useState<TaskFormat>(defaultFormat);
   const [withIllustration, setWithIllustration] = useState(defaultWithIllustration);
@@ -93,7 +94,7 @@ export function RegenerateDialog({
               type="button"
               className="h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => {
-                toast.info("Генерация будет подключена к ИИ");
+                onSubmit?.({ format, withIllustration, additionalRequest: instructions });
                 onOpenChange(false);
               }}
             >
