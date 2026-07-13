@@ -110,15 +110,24 @@ export function AppHeader({
                   </div>
                 ))}
 
-                <Button
-                  className="w-full"
-                  onClick={() => {
-                    onPromptsChange(draft);
-                    savePrompts(draft);
-                  }}
-                >
-                  Сохранить
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setDraft(DEFAULT_PROMPTS)}
+                  >
+                    Сбросить по умолчанию
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      onPromptsChange(draft);
+                      savePrompts(draft);
+                    }}
+                  >
+                    Сохранить
+                  </Button>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
