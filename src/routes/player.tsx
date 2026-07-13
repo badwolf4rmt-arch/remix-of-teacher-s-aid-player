@@ -302,6 +302,30 @@ function PlayerPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={jsonOpen} onOpenChange={setJsonOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogTitle>Чистая выдача моделей</DialogTitle>
+          <div className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto">
+            <section>
+              <h3 className="mb-2 text-sm font-semibold text-foreground">
+                Этап 1 — задание и заметки (JSON)
+              </h3>
+              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
+{formatMaybeJson(rawStage1) || "— пусто —"}
+              </pre>
+            </section>
+            <section>
+              <h3 className="mb-2 text-sm font-semibold text-foreground">
+                Этап 2 — бриф на картинку
+              </h3>
+              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
+{formatMaybeJson(rawStage2) || "— пусто —"}
+              </pre>
+            </section>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
