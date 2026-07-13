@@ -141,7 +141,18 @@ function PlayerPage() {
   const handleRegenerate = (opts: { format: TaskFormat; withIllustration: boolean; additionalRequest: string }) => {
     if (!params) return;
     setRegenOpen(false);
-    void runPipeline(params, model, prompts, opts);
+    const wrapped = [
+      "Сгенерируй новое задание по тем же параметрам в указанном формате. Тему, предмет и параллели сохрани. Соблюдай структуру формата из системного промпта.",
+      "",
+      "Организацию работы (индивидуально, в парах или в группах) определи самостоятельно по выбранному формату задания, возрасту и содержанию. Встрой это в инструкцию ученику, не выводи отдельным полем.",
+      "",
+      `Дополнительный запрос: ${opts.additionalRequest || "—"}`,
+      "",
+      "Режим: перегенерация",
+      "",
+      "Предыдущее задание используй только как контекст, при необходимости измени формат.",
+    ].join("\n");
+    void runPipeline(params, model, prompts, { ...opts, additionalRequest: wrapped });
   };
 
   const formatLabel = TASK_FORMATS.find((f) => f.id === params?.format)?.label || "Кейс";
