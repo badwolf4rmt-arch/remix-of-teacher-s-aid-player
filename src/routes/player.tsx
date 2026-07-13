@@ -84,6 +84,7 @@ function PlayerPage() {
         });
         setTaskContent(t.task);
         setNotesContent(t.notes);
+        setRawStage1(t.raw ?? "");
 
         if (!effective.withIllustration) {
           setStage("done");
