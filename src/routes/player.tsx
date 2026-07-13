@@ -54,6 +54,11 @@ function PlayerPage() {
   const [rawStage2, setRawStage2] = useState("");
   const [jsonOpen, setJsonOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
+  const [costTask, setCostTask] = useState<number | null>(null);
+  const [costBrief, setCostBrief] = useState<number | null>(null);
+  const [costImage, setCostImage] = useState<number | null>(null);
+  const [displayFormat, setDisplayFormat] = useState<string>("");
+  const [lastFormatId, setLastFormatId] = useState<TaskFormat>("any");
 
   const genTask = useServerFn(generateTask);
   const genBrief = useServerFn(generateImageBrief);
@@ -69,7 +74,11 @@ function PlayerPage() {
       setImageUrl(null);
       setRawStage1("");
       setRawStage2("");
+      setCostTask(null);
+      setCostBrief(null);
+      setCostImage(null);
       const effective: FormDraft = { ...p, ...(overrides ?? {}) };
+      setLastFormatId(effective.format);
       try {
         setStage("task");
         const t = await genTask({
@@ -86,9 +95,19 @@ function PlayerPage() {
         setTaskContent(t.task);
         setNotesContent(t.notes);
         setRawStage1(t.raw ?? "");
+        const cTask = t.usage?.cost ?? null;
+        setCostTask(cTask);
+        // If user selected "any", surface AI-returned task_format
+        const chosenLabel =
+          effective.format === "any"
+            ? (t.taskFormat || "Мотивирующее задание")
+            : (TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "");
+        setDisplayFormat(chosenLabel);
 
         let briefText = "";
         let finalImageUrl: string | null = null;
+        let cBrief: number | null = null;
+        let cImage: number | null = null;
 
         if (effective.withIllustration) {
           setStage("brief");
@@ -98,12 +117,14 @@ function PlayerPage() {
               subject: effective.subject,
               grade: effective.grade,
               topic: effective.topic,
-              taskFormat: TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "любой",
+              taskFormat: chosenLabel || "любой",
               studentTask: t.task,
             },
           });
           briefText = b.brief ?? "";
           setRawStage2(briefText);
+          cBrief = b.usage?.cost ?? null;
+          setCostBrief(cBrief);
 
           setStage("image");
           const img = await genImage({
@@ -115,9 +136,14 @@ function PlayerPage() {
           });
           finalImageUrl = img.imageUrl;
           setImageUrl(finalImageUrl);
+          cImage = img.usage?.cost ?? null;
+          setCostImage(cImage);
         }
 
         setStage("done");
+
+        const total =
+          (cTask ?? 0) + (cBrief ?? 0) + (cImage ?? 0);
 
         // Auto-save the generation
         try {
@@ -131,6 +157,13 @@ function PlayerPage() {
             raw_stage1: t.raw ?? null,
             image_brief: briefText || null,
             image_url: finalImageUrl,
+            cost_task: cTask,
+            cost_brief: cBrief,
+            cost_image: cImage,
+            cost_total: total || null,
+            tokens_task: t.usage ?? null,
+            tokens_brief: null,
+            tokens_image: null,
           } as never);
         } catch (saveErr) {
           console.error("Failed to save generation", saveErr);
@@ -176,8 +209,16 @@ function PlayerPage() {
     void runPipeline(params, model, prompts, { ...opts, additionalRequest: wrapped });
   };
 
-  const formatLabel = TASK_FORMATS.find((f) => f.id === params?.format)?.label || "Кейс";
+  const formatLabel =
+    displayFormat ||
+    TASK_FORMATS.find((f) => f.id === (lastFormatId ?? params?.format))?.label ||
+    "";
   const busy = stage === "task" || stage === "brief" || stage === "image";
+  const totalCost =
+    (costTask ?? 0) + (costBrief ?? 0) + (costImage ?? 0);
+  const anyCost = costTask != null || costBrief != null || costImage != null;
+  const fmtUsd = (v: number) =>
+    v >= 0.01 ? `$${v.toFixed(3)}` : `$${v.toFixed(4)}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -221,14 +262,24 @@ function PlayerPage() {
                 <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
                   Мотивирующее задание
                 </span>
-                <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
-                  {formatLabel}
-                </span>
+                {formatLabel && (
+                  <span className="rounded-full bg-[var(--surface-lavender)] px-3 py-1 text-xs font-medium text-primary">
+                    {formatLabel}
+                  </span>
+                )}
 
+                {anyCost && (
+                  <span
+                    className="ml-auto rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground"
+                    title={`Задание: ${fmtUsd(costTask ?? 0)} • Бриф: ${fmtUsd(costBrief ?? 0)} • Картинка: ${fmtUsd(costImage ?? 0)}`}
+                  >
+                    Стоимость: {fmtUsd(totalCost)}
+                  </span>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
+                  className={`${anyCost ? "" : "ml-auto"} gap-2 rounded-lg text-muted-foreground hover:bg-muted`}
                   onClick={() => setJsonOpen(true)}
                   disabled={!rawStage1 && !rawStage2}
                 >
@@ -313,9 +364,10 @@ function PlayerPage() {
       </main>
 
       <RegenerateDialog
+        key={`regen-${lastFormatId}-${regenOpen}`}
         open={regenOpen}
         onOpenChange={setRegenOpen}
-        defaultFormat={params?.format || "any"}
+        defaultFormat={lastFormatId}
         defaultWithIllustration={params?.withIllustration ?? true}
         onSubmit={handleRegenerate}
       />

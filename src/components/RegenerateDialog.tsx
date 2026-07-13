@@ -33,7 +33,12 @@ export function RegenerateDialog({
   defaultWithIllustration = true,
   onSubmit,
 }: Props) {
-  const [format, setFormat] = useState<TaskFormat>(defaultFormat);
+  // "any" is not allowed on regenerate — fall back to first concrete format
+  const initialFormat: TaskFormat =
+    defaultFormat && defaultFormat !== "any"
+      ? defaultFormat
+      : (TASK_FORMATS.find((f) => f.id !== "any")?.id ?? "кейс");
+  const [format, setFormat] = useState<TaskFormat>(initialFormat);
   const [withIllustration, setWithIllustration] = useState(defaultWithIllustration);
   const [instructions, setInstructions] = useState("");
 
@@ -56,8 +61,8 @@ export function RegenerateDialog({
                 <SelectValue placeholder="Любой" />
               </SelectTrigger>
               <SelectContent>
-                {TASK_FORMATS.map((f) => (
-                  <SelectItem key={f.id || "any"} value={f.id}>
+                {TASK_FORMATS.filter((f) => f.id !== "any").map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
                     {f.label}
                   </SelectItem>
                 ))}
