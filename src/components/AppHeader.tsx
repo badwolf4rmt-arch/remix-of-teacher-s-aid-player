@@ -63,7 +63,7 @@ export function AppHeader({
           </div>
 
           <Select value={model} onValueChange={(v) => onModelChange(v as ModelId)}>
-            <SelectTrigger className="h-9 w-32 rounded-lg border-0 bg-[var(--surface-lavender)] text-sm shadow-none">
+            <SelectTrigger className="h-9 w-52 rounded-lg border-0 bg-[var(--surface-lavender)] text-sm shadow-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
