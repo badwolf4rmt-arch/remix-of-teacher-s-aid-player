@@ -61,8 +61,8 @@ export function RegenerateDialog({
                 <SelectValue placeholder="Любой" />
               </SelectTrigger>
               <SelectContent>
-                {TASK_FORMATS.map((f) => (
-                  <SelectItem key={f.id || "any"} value={f.id}>
+                {TASK_FORMATS.filter((f) => f.id !== "any").map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
                     {f.label}
                   </SelectItem>
                 ))}
