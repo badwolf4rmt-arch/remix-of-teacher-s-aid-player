@@ -63,12 +63,12 @@ export function AppHeader({
           </div>
 
           <Select value={model} onValueChange={(v) => onModelChange(v as ModelId)}>
-            <SelectTrigger className="h-9 w-32 rounded-lg border-0 bg-[var(--surface-lavender)] text-sm shadow-none">
+            <SelectTrigger className="h-9 w-52 rounded-lg border-0 bg-[var(--surface-lavender)] text-sm shadow-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="claude">Claude</SelectItem>
-              <SelectItem value="gemini">Gemini</SelectItem>
+              <SelectItem value="claude">Claude Sonnet 4.5</SelectItem>
+              <SelectItem value="gemini">gemini-2.5-flash</SelectItem>
             </SelectContent>
           </Select>
 
