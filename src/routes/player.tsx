@@ -162,7 +162,7 @@ function PlayerPage() {
             cost_image: cImage,
             cost_total: total || null,
             tokens_task: t.usage ?? null,
-            tokens_brief: (briefText ? undefined : null) ?? null,
+            tokens_brief: null,
             tokens_image: null,
           } as never);
         } catch (saveErr) {
