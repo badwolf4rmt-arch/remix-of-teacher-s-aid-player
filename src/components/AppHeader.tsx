@@ -67,8 +67,8 @@ export function AppHeader({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="claude">Claude</SelectItem>
-              <SelectItem value="gemini">Gemini</SelectItem>
+              <SelectItem value="claude">Claude Sonnet 4.5</SelectItem>
+              <SelectItem value="gemini">gemini-2.5-flash</SelectItem>
             </SelectContent>
           </Select>
 
