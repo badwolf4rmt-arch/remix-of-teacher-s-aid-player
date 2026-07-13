@@ -51,7 +51,7 @@ export const generateTask = createServerFn({ method: "POST" })
   .inputValidator((d: GenTaskInput) => d)
   .handler(async ({ data }) => {
     const model =
-      data.model === "gemini" ? "google/gemini-2.5-pro" : "anthropic/claude-sonnet-4.5";
+      data.model === "gemini" ? "google/gemini-2.5-flash" : "anthropic/claude-sonnet-4.5";
     const userMsg = [
       `Предмет: ${data.subject}`,
       `Класс/параллель: ${data.grade}`,
