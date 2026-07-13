@@ -74,7 +74,11 @@ function PlayerPage() {
       setImageUrl(null);
       setRawStage1("");
       setRawStage2("");
+      setCostTask(null);
+      setCostBrief(null);
+      setCostImage(null);
       const effective: FormDraft = { ...p, ...(overrides ?? {}) };
+      setLastFormatId(effective.format);
       try {
         setStage("task");
         const t = await genTask({
@@ -91,9 +95,19 @@ function PlayerPage() {
         setTaskContent(t.task);
         setNotesContent(t.notes);
         setRawStage1(t.raw ?? "");
+        const cTask = t.usage?.cost ?? null;
+        setCostTask(cTask);
+        // If user selected "any", surface AI-returned task_format
+        const chosenLabel =
+          effective.format === "any"
+            ? (t.taskFormat || "Мотивирующее задание")
+            : (TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "");
+        setDisplayFormat(chosenLabel);
 
         let briefText = "";
         let finalImageUrl: string | null = null;
+        let cBrief: number | null = null;
+        let cImage: number | null = null;
 
         if (effective.withIllustration) {
           setStage("brief");
@@ -103,12 +117,14 @@ function PlayerPage() {
               subject: effective.subject,
               grade: effective.grade,
               topic: effective.topic,
-              taskFormat: TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "любой",
+              taskFormat: chosenLabel || "любой",
               studentTask: t.task,
             },
           });
           briefText = b.brief ?? "";
           setRawStage2(briefText);
+          cBrief = b.usage?.cost ?? null;
+          setCostBrief(cBrief);
 
           setStage("image");
           const img = await genImage({
@@ -120,9 +136,14 @@ function PlayerPage() {
           });
           finalImageUrl = img.imageUrl;
           setImageUrl(finalImageUrl);
+          cImage = img.usage?.cost ?? null;
+          setCostImage(cImage);
         }
 
         setStage("done");
+
+        const total =
+          (cTask ?? 0) + (cBrief ?? 0) + (cImage ?? 0);
 
         // Auto-save the generation
         try {
@@ -136,6 +157,13 @@ function PlayerPage() {
             raw_stage1: t.raw ?? null,
             image_brief: briefText || null,
             image_url: finalImageUrl,
+            cost_task: cTask,
+            cost_brief: cBrief,
+            cost_image: cImage,
+            cost_total: total || null,
+            tokens_task: t.usage ?? null,
+            tokens_brief: (briefText ? undefined : null) ?? null,
+            tokens_image: null,
           } as never);
         } catch (saveErr) {
           console.error("Failed to save generation", saveErr);
