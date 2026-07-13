@@ -48,6 +48,7 @@ function PlayerPage() {
   const [taskContent, setTaskContent] = useState("");
   const [notesContent, setNotesContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageOpen, setImageOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
 
   const genTask = useServerFn(generateTask);
