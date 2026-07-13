@@ -66,6 +66,8 @@ function PlayerPage() {
       setTaskContent("");
       setNotesContent("");
       setImageUrl(null);
+      setRawStage1("");
+      setRawStage2("");
       const effective: FormDraft = { ...p, ...(overrides ?? {}) };
       try {
         setStage("task");
