@@ -43,7 +43,7 @@ export const SUBJECT_CATALOG = [
 export const GRADE_CATALOG = Array.from({ length: 11 }, (_, index) => String(index + 1));
 
 export const TASK_FORMATS = [
-  { id: "", label: "Любой (пусть выберет ИИ)" },
+  { id: "any", label: "Любой" },
   { id: "игра", label: "Игра" },
   { id: "кейс", label: "Кейс" },
   { id: "необычный_факт", label: "Необычный факт" },
@@ -51,6 +51,7 @@ export const TASK_FORMATS = [
   { id: "дискуссия", label: "Дискуссия" },
   { id: "исследование", label: "Исследование" },
 ] as const;
+
 
 export type TaskFormat = (typeof TASK_FORMATS)[number]["id"];
 
