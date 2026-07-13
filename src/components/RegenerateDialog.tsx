@@ -29,7 +29,7 @@ type Props = {
 export function RegenerateDialog({
   open,
   onOpenChange,
-  defaultFormat = "",
+  defaultFormat = "any",
   defaultWithIllustration = true,
 }: Props) {
   const [format, setFormat] = useState<TaskFormat>(defaultFormat);
