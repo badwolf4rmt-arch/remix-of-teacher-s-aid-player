@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
+import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +22,17 @@ import {
   type FormDraft,
   type TaskFormat,
 } from "@/lib/catalogs";
-import { saveParams } from "@/lib/playerState";
+import {
+  DEFAULT_PROMPTS,
+  loadModel,
+  loadPrompts,
+  loadUser,
+  saveModel,
+  saveParams,
+  saveUser,
+  type ModelId,
+  type PromptSettings,
+} from "@/lib/playerState";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -37,6 +48,16 @@ function RequiredMark() {
 function ParamsPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormDraft>(DEFAULT_FORM);
+  const [userName, setUserName] = useState("");
+  const [model, setModel] = useState<ModelId>("claude");
+  const [prompts, setPrompts] = useState<PromptSettings>(DEFAULT_PROMPTS);
+
+  useEffect(() => {
+    setUserName(loadUser());
+    setModel(loadModel());
+    setPrompts(loadPrompts());
+  }, []);
+
   const canSubmit = !!(form.subject.trim() && form.grade.trim() && form.topic.trim());
 
   const update = (p: Partial<FormDraft>) => setForm((f) => ({ ...f, ...p }));
@@ -44,8 +65,18 @@ function ParamsPage() {
     "h-11 rounded-xl border-0 bg-[var(--surface-lavender)] px-4 text-sm text-foreground shadow-none focus-visible:ring-2 focus-visible:ring-primary/40";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
-      <div className="w-full max-w-xl rounded-3xl bg-card p-8 shadow-2xl">
+    <div className="min-h-screen bg-background">
+      <AppHeader
+        userName={userName}
+        onUserChange={(v) => { setUserName(v); saveUser(v); }}
+        model={model}
+        onModelChange={(v) => { setModel(v); saveModel(v); }}
+        prompts={prompts}
+        onPromptsChange={setPrompts}
+      />
+
+      <div className="flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-xl rounded-3xl bg-card p-8 shadow-2xl">
         <div className="mb-6 flex items-start justify-between">
           <h1 className="text-2xl font-semibold text-foreground">Мотивирующее задание</h1>
           <button
@@ -182,6 +213,7 @@ function ParamsPage() {
               Сгенерировать
             </Button>
           </div>
+        </div>
         </div>
       </div>
     </div>
