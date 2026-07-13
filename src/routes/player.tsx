@@ -54,6 +54,11 @@ function PlayerPage() {
   const [rawStage2, setRawStage2] = useState("");
   const [jsonOpen, setJsonOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
+  const [costTask, setCostTask] = useState<number | null>(null);
+  const [costBrief, setCostBrief] = useState<number | null>(null);
+  const [costImage, setCostImage] = useState<number | null>(null);
+  const [displayFormat, setDisplayFormat] = useState<string>("");
+  const [lastFormatId, setLastFormatId] = useState<TaskFormat>("any");
 
   const genTask = useServerFn(generateTask);
   const genBrief = useServerFn(generateImageBrief);
