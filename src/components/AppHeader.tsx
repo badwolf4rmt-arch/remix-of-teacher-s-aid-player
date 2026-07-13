@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { savePrompts, type ModelId, type PromptSettings } from "@/lib/playerState";
+import { DEFAULT_PROMPTS, savePrompts, type ModelId, type PromptSettings } from "@/lib/playerState";
 
 type Props = {
   userName: string;
