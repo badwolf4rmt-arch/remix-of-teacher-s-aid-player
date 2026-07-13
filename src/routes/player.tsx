@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Maximize2, RefreshCw } from "lucide-react";
+import { Braces, Loader2, Maximize2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
@@ -49,6 +49,9 @@ function PlayerPage() {
   const [notesContent, setNotesContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageOpen, setImageOpen] = useState(false);
+  const [rawStage1, setRawStage1] = useState("");
+  const [rawStage2, setRawStage2] = useState("");
+  const [jsonOpen, setJsonOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
 
   const genTask = useServerFn(generateTask);
@@ -63,6 +66,8 @@ function PlayerPage() {
       setTaskContent("");
       setNotesContent("");
       setImageUrl(null);
+      setRawStage1("");
+      setRawStage2("");
       const effective: FormDraft = { ...p, ...(overrides ?? {}) };
       try {
         setStage("task");
@@ -79,6 +84,7 @@ function PlayerPage() {
         });
         setTaskContent(t.task);
         setNotesContent(t.notes);
+        setRawStage1(t.raw ?? "");
 
         if (!effective.withIllustration) {
           setStage("done");
@@ -96,6 +102,7 @@ function PlayerPage() {
             studentTask: t.task,
           },
         });
+        setRawStage2(b.brief ?? "");
 
         setStage("image");
         const img = await genImage({
@@ -190,6 +197,16 @@ function PlayerPage() {
                   variant="ghost"
                   size="sm"
                   className="ml-auto gap-2 rounded-lg text-muted-foreground hover:bg-muted"
+                  onClick={() => setJsonOpen(true)}
+                  disabled={!rawStage1 && !rawStage2}
+                >
+                  <Braces className="h-4 w-4" />
+                  Показать чистый JSON
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 rounded-lg text-muted-foreground hover:bg-muted"
                   onClick={() => setRegenOpen(true)}
                   disabled={busy}
                 >
@@ -285,6 +302,30 @@ function PlayerPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={jsonOpen} onOpenChange={setJsonOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogTitle>Чистая выдача моделей</DialogTitle>
+          <div className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto">
+            <section>
+              <h3 className="mb-2 text-sm font-semibold text-foreground">
+                Этап 1 — задание и заметки (JSON)
+              </h3>
+              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
+{formatMaybeJson(rawStage1) || "— пусто —"}
+              </pre>
+            </section>
+            <section>
+              <h3 className="mb-2 text-sm font-semibold text-foreground">
+                Этап 2 — бриф на картинку
+              </h3>
+              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
+{formatMaybeJson(rawStage2) || "— пусто —"}
+              </pre>
+            </section>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -296,4 +337,14 @@ function StageLoader({ label }: { label: string }) {
       {label}
     </div>
   );
+}
+
+function formatMaybeJson(s: string) {
+  const trimmed = (s ?? "").trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+  if (!trimmed) return "";
+  try {
+    return JSON.stringify(JSON.parse(trimmed), null, 2);
+  } catch {
+    return trimmed;
+  }
 }

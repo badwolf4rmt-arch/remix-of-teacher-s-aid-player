@@ -71,6 +71,7 @@ export const generateTask = createServerFn({ method: "POST" })
       task: task || "_Модель вернула пустое задание._",
       notes: notes || "_Заметки для учителя не были возвращены моделью._",
       taskFormat,
+      raw: full,
     };
   });
 
