@@ -58,7 +58,7 @@ export type FormDraft = {
   subject: string;
   grade: string;
   topic: string;
-  isNewTopic: boolean;
+  withIllustration: boolean;
   format: TaskFormat;
   additionalRequest: string;
 };
@@ -67,7 +67,7 @@ export const DEFAULT_FORM: FormDraft = {
   subject: "",
   grade: "",
   topic: "",
-  isNewTopic: true,
+  withIllustration: true,
   format: "",
   additionalRequest: "",
 };
