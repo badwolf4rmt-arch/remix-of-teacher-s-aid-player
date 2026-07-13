@@ -41,23 +41,11 @@ export function RegenerateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="max-w-lg rounded-3xl border-0 bg-card p-8 shadow-2xl"
-      >
-        <div className="mb-6 flex items-start justify-between">
-          <DialogTitle className="text-2xl font-semibold text-foreground">
-            Мотивирующее задание
-          </DialogTitle>
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            className="rounded-full p-1 text-muted-foreground hover:bg-muted"
-            aria-label="Закрыть"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+      <DialogContent className="max-w-lg rounded-3xl border-0 bg-card p-8 shadow-2xl">
+        <DialogTitle className="mb-6 text-2xl font-semibold text-foreground">
+          Мотивирующее задание
+        </DialogTitle>
+
 
         <div className="space-y-5">
           <div className="space-y-2">
