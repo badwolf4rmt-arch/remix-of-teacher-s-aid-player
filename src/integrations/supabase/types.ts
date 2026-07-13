@@ -56,6 +56,48 @@ export type Database = {
         }
         Relationships: []
       }
+      generations: {
+        Row: {
+          created_at: string
+          id: string
+          image_brief: string | null
+          image_url: string | null
+          model: string | null
+          params: Json | null
+          raw_stage1: string | null
+          task_content: string | null
+          task_format: string | null
+          teacher_notes: string | null
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_brief?: string | null
+          image_url?: string | null
+          model?: string | null
+          params?: Json | null
+          raw_stage1?: string | null
+          task_content?: string | null
+          task_format?: string | null
+          teacher_notes?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_brief?: string | null
+          image_url?: string | null
+          model?: string | null
+          params?: Json | null
+          raw_stage1?: string | null
+          task_content?: string | null
+          task_format?: string | null
+          teacher_notes?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
