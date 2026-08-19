@@ -459,3 +459,14 @@ function formatMaybeJson(s: string) {
     return trimmed;
   }
 }
+
+function JsonBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <section>
+      <h3 className="mb-2 text-sm font-semibold text-foreground">{label}</h3>
+      <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
+{formatMaybeJson(value) || "— пусто —"}
+      </pre>
+    </section>
+  );
+}
