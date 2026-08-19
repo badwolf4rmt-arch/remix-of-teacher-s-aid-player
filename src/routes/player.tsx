@@ -259,7 +259,7 @@ function PlayerPage() {
             </div>
 
             <h1 className="mb-6 text-3xl font-semibold text-foreground">
-              {taskTitle || params?.topic || "Тема задания"}
+              {params?.topic || taskTitle || "Тема задания"}
             </h1>
 
             <div className="relative rounded-2xl border-2 border-primary/40 bg-card p-6 shadow-sm">
