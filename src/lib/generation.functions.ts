@@ -146,21 +146,76 @@ export const generateImageBrief = createServerFn({ method: "POST" })
     const sys = data.systemPrompt
       .replaceAll("{{subject}}", data.subject)
       .replaceAll("{{topic}}", data.topic)
+      .replaceAll("{{grades}}", data.grade)
       .replaceAll("{{grade}}", data.grade)
       .replaceAll("{{title}}", data.topic)
       .replaceAll("{{taskFormat}}", data.taskFormat || "любой")
       .replaceAll("{{studentTask}}", data.studentTask);
+    const strItem = {
+      type: "object",
+      properties: { item: { type: "string" } },
+      required: ["item"],
+      additionalProperties: false,
+    } as const;
     const res = await callOpenRouter({
       model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: sys },
         { role: "user", content: "Сформируй imageBrief по инструкции. Верни только JSON." },
       ],
-      response_format: { type: "json_object" },
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "image_brief",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              imageBrief: {
+                type: "object",
+                properties: {
+                  imageType: { type: "string" },
+                  imageTypeReason: { type: "string" },
+                  peoplePolicy: { type: "string" },
+                  mainScene: { type: "string" },
+                  mainSubject: { type: "string" },
+                  location: { type: "string" },
+                  atmosphere: { type: "string" },
+                  mustShow: { type: "array", items: strItem },
+                  mustNotShow: { type: "array", items: strItem },
+                  motivationGoal: { type: "string" },
+                },
+                required: [
+                  "imageType",
+                  "imageTypeReason",
+                  "peoplePolicy",
+                  "mainScene",
+                  "mainSubject",
+                  "location",
+                  "atmosphere",
+                  "mustShow",
+                  "mustNotShow",
+                  "motivationGoal",
+                ],
+                additionalProperties: false,
+              },
+              imageRequest: {
+                type: "object",
+                properties: { content: { type: "string" } },
+                required: ["content"],
+                additionalProperties: false,
+              },
+            },
+            required: ["imageBrief", "imageRequest"],
+            additionalProperties: false,
+          },
+        },
+      },
     });
     const content: string = res?.choices?.[0]?.message?.content ?? "{}";
     return { brief: content.trim(), usage: extractUsage(res) };
   });
+
 
 type GenImageInput = {
   systemPrompt: string;

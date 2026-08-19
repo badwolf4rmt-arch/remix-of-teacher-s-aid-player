@@ -478,7 +478,7 @@ JSON-СХЕМА ОТВЕТА
     "task": {
       "type": "object",
       "properties": {
-        "title": { "type": "string" },
+        "title": { "type": "string" },   // ровно тема из входных данных: {{topic}}
         "content": { "type": "string" }
       },
       "required": ["title", "content"]
@@ -487,3 +487,6 @@ JSON-СХЕМА ОТВЕТА
   },
   "required": ["task_format", "task", "teacher_notes"]
 }
+
+
+ЖЁСТКОЕ ПРАВИЛО: поле task.title всегда равно теме из входных данных ({{topic}}) дословно, без переформулировок и добавлений.
