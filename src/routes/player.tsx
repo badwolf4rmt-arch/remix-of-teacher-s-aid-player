@@ -54,6 +54,9 @@ function PlayerPage() {
   const [imageOpen, setImageOpen] = useState(false);
   const [rawStage1, setRawStage1] = useState("");
   const [rawStage2, setRawStage2] = useState("");
+  const [reqStage1, setReqStage1] = useState("");
+  const [reqStage2, setReqStage2] = useState("");
+  const [reqStage3, setReqStage3] = useState("");
   const [jsonOpen, setJsonOpen] = useState(false);
   const [stageError, setStageError] = useState<string | null>(null);
   const [costTask, setCostTask] = useState<number | null>(null);
