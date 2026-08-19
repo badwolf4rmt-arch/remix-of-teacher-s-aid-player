@@ -146,6 +146,7 @@ function PlayerPage() {
               additionalRequest: effective.additionalRequest,
             },
           });
+          setReqStage3(img.request ?? "");
           finalImageUrl = img.imageUrl;
           setImageUrl(finalImageUrl);
           cImage = img.usage?.cost ?? null;
