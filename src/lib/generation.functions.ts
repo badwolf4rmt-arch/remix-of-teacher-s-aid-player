@@ -73,7 +73,7 @@ export const generateTask = createServerFn({ method: "POST" })
       "",
       "Сгенерируй задание строго по инструкции. Верни только JSON заданной схемы.",
     ].join("\n");
-    const res = await callOpenRouter({
+    const requestBody = {
       model,
       messages: [
         { role: "system", content: sys },
@@ -104,7 +104,8 @@ export const generateTask = createServerFn({ method: "POST" })
           },
         },
       },
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const full: string = res?.choices?.[0]?.message?.content ?? "";
     const cleaned = full.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
     let task = "";
@@ -128,6 +129,7 @@ export const generateTask = createServerFn({ method: "POST" })
       taskFormat,
       title,
       raw: full,
+      request: JSON.stringify(requestBody, null, 2),
       usage: extractUsage(res),
     };
   });
@@ -159,7 +161,7 @@ export const generateImageBrief = createServerFn({ method: "POST" })
       required: ["item"],
       additionalProperties: false,
     } as const;
-    const res = await callOpenRouter({
+    const requestBody = {
       model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: sys },
@@ -213,9 +215,14 @@ export const generateImageBrief = createServerFn({ method: "POST" })
           },
         },
       },
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const content: string = res?.choices?.[0]?.message?.content ?? "{}";
-    return { brief: content.trim(), usage: extractUsage(res) };
+    return {
+      brief: content.trim(),
+      request: JSON.stringify(requestBody, null, 2),
+      usage: extractUsage(res),
+    };
   });
 
 
@@ -233,16 +240,21 @@ export const generateImage = createServerFn({ method: "POST" })
       .replaceAll("{{imageBrief}}", briefBlock)
       .replaceAll("{{additionalRequest}}", data.additionalRequest || "—");
 
-    const res = await callOpenRouter({
+    const requestBody = {
       model: "google/gemini-3.1-flash-image",
       messages: [{ role: "user", content: prompt }],
       modalities: ["image", "text"],
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const msg = res?.choices?.[0]?.message ?? {};
     const images: Array<{ image_url?: { url?: string } }> = msg.images ?? [];
     const url = images[0]?.image_url?.url;
     if (!url) {
       throw new Error("Модель не вернула изображение. " + (msg.content || "").slice(0, 300));
     }
-    return { imageUrl: url, usage: extractUsage(res) };
+    return {
+      imageUrl: url,
+      request: JSON.stringify(requestBody, null, 2),
+      usage: extractUsage(res),
+    };
   });
