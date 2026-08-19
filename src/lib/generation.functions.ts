@@ -237,12 +237,15 @@ export const generateImage = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const briefBlock = buildBriefBlock(data.imageBrief);
     const prompt = data.systemPrompt
-      .replaceAll("{{imageBrief}}", briefBlock)
+      .replaceAll("{{imageBrief}}", "")
       .replaceAll("{{additionalRequest}}", data.additionalRequest || "—");
 
     const requestBody = {
       model: "google/gemini-3.1-flash-image",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "user", content: prompt },
+        { role: "user", content: briefBlock },
+      ],
       modalities: ["image", "text"],
     };
     const res = await callOpenRouter(requestBody);
