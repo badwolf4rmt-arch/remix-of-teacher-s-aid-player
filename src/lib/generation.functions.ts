@@ -129,6 +129,7 @@ export const generateTask = createServerFn({ method: "POST" })
       taskFormat,
       title,
       raw: full,
+      request: JSON.stringify(requestBody, null, 2),
       usage: extractUsage(res),
     };
   });
