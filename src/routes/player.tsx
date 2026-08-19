@@ -105,6 +105,7 @@ function PlayerPage() {
         setTaskTitle(t.title ?? "");
         setNotesContent(t.notes);
         setRawStage1(t.raw ?? "");
+        setReqStage1(t.request ?? "");
         const cTask = t.usage?.cost ?? null;
         setCostTask(cTask);
         // If user selected "any", surface AI-returned task_format
