@@ -235,7 +235,10 @@ type GenImageInput = {
 export const generateImage = createServerFn({ method: "POST" })
   .inputValidator((d: GenImageInput) => d)
   .handler(async ({ data }) => {
-    const briefBlock = buildBriefBlock(data.imageBrief);
+    const briefText = (data.imageBrief ?? "")
+      .trim()
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "");
     const prompt = data.systemPrompt
       .replaceAll("{{imageBrief}}", "")
       .replaceAll("{{additionalRequest}}", data.additionalRequest || "—");
@@ -244,7 +247,7 @@ export const generateImage = createServerFn({ method: "POST" })
       model: "google/gemini-3.1-flash-image",
       messages: [
         { role: "user", content: prompt },
-        { role: "user", content: briefBlock },
+        { role: "user", content: briefText },
       ],
       modalities: ["image", "text"],
     };
