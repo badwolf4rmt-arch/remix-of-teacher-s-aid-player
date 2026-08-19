@@ -161,7 +161,7 @@ export const generateImageBrief = createServerFn({ method: "POST" })
       required: ["item"],
       additionalProperties: false,
     } as const;
-    const res = await callOpenRouter({
+    const requestBody = {
       model: "google/gemini-2.5-flash",
       messages: [
         { role: "system", content: sys },
