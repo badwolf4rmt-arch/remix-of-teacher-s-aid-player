@@ -402,26 +402,38 @@ function PlayerPage() {
       </Dialog>
 
       <Dialog open={jsonOpen} onOpenChange={setJsonOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogTitle>Чистая выдача моделей</DialogTitle>
-          <div className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto">
-            <section>
-              <h3 className="mb-2 text-sm font-semibold text-foreground">
-                Этап 1 — задание и заметки (JSON)
-              </h3>
-              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
-{formatMaybeJson(rawStage1) || "— пусто —"}
-              </pre>
-            </section>
-            <section>
-              <h3 className="mb-2 text-sm font-semibold text-foreground">
-                Этап 2 — бриф на картинку
-              </h3>
-              <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-muted/40 p-3 text-xs text-foreground">
-{formatMaybeJson(rawStage2) || "— пусто —"}
-              </pre>
-            </section>
-          </div>
+        <DialogContent className="max-w-4xl">
+          <DialogTitle>Дата-контракт по этапам</DialogTitle>
+          <Tabs defaultValue="s1-in" className="mt-4">
+            <TabsList className="flex h-auto flex-wrap justify-start gap-1">
+              <TabsTrigger value="s1-in">1 · Вход</TabsTrigger>
+              <TabsTrigger value="s1-out">1 · Выход</TabsTrigger>
+              <TabsTrigger value="s2-in">2 · Вход</TabsTrigger>
+              <TabsTrigger value="s2-out">2 · Выход</TabsTrigger>
+              <TabsTrigger value="s3-in">3 · Вход</TabsTrigger>
+              <TabsTrigger value="s3-out">3 · Выход</TabsTrigger>
+            </TabsList>
+            <div className="mt-4 max-h-[70vh] overflow-y-auto">
+              <TabsContent value="s1-in">
+                <JsonBlock label="Запрос к модели этапа 1 (system + user + схема)" value={reqStage1} />
+              </TabsContent>
+              <TabsContent value="s1-out">
+                <JsonBlock label="Ответ этапа 1 — задание и заметки" value={rawStage1} />
+              </TabsContent>
+              <TabsContent value="s2-in">
+                <JsonBlock label="Запрос к модели этапа 2 (system + user + схема)" value={reqStage2} />
+              </TabsContent>
+              <TabsContent value="s2-out">
+                <JsonBlock label="Ответ этапа 2 — бриф на картинку" value={rawStage2} />
+              </TabsContent>
+              <TabsContent value="s3-in">
+                <JsonBlock label="Запрос к модели этапа 3 (финальный промпт с брифом)" value={reqStage3} />
+              </TabsContent>
+              <TabsContent value="s3-out">
+                <JsonBlock label="Ответ этапа 3 — ссылка на изображение" value={imageUrl ?? ""} />
+              </TabsContent>
+            </div>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
