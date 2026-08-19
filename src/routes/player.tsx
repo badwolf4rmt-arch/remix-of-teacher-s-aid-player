@@ -10,6 +10,7 @@ import { RegenerateDialog } from "@/components/RegenerateDialog";
 import { EvaluationPanel } from "@/components/EvaluationPanel";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
   DEFAULT_PROMPTS,
