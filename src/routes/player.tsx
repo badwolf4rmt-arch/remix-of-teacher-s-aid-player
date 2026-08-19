@@ -47,6 +47,8 @@ function PlayerPage() {
 
   const [stage, setStage] = useState<Stage>("idle");
   const [taskContent, setTaskContent] = useState("");
+  const [taskTitle, setTaskTitle] = useState("");
+
   const [notesContent, setNotesContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageOpen, setImageOpen] = useState(false);
@@ -70,6 +72,7 @@ function PlayerPage() {
     async (p: FormDraft, m: ModelId, pr: PromptSettings, overrides?: Partial<FormDraft> & { additionalRequest?: string }) => {
       setStageError(null);
       setTaskContent("");
+      setTaskTitle("");
       setNotesContent("");
       setImageUrl(null);
       setRawStage1("");
@@ -93,6 +96,7 @@ function PlayerPage() {
           },
         });
         setTaskContent(t.task);
+        setTaskTitle(t.title ?? "");
         setNotesContent(t.notes);
         setRawStage1(t.raw ?? "");
         const cTask = t.usage?.cost ?? null;
@@ -152,6 +156,7 @@ function PlayerPage() {
             model: m,
             params: effective as unknown as Record<string, unknown>,
             task_format: t.taskFormat || null,
+            task_title: t.title || null,
             task_content: t.task,
             teacher_notes: t.notes,
             raw_stage1: t.raw ?? null,
@@ -254,7 +259,7 @@ function PlayerPage() {
             </div>
 
             <h1 className="mb-6 text-3xl font-semibold text-foreground">
-              {params?.topic || "Тема задания"}
+              {taskTitle || params?.topic || "Тема задания"}
             </h1>
 
             <div className="relative rounded-2xl border-2 border-primary/40 bg-card p-6 shadow-sm">

@@ -71,6 +71,7 @@ export type Database = {
           raw_stage1: string | null
           task_content: string | null
           task_format: string | null
+          task_title: string | null
           teacher_notes: string | null
           tokens_brief: Json | null
           tokens_image: Json | null
@@ -91,6 +92,7 @@ export type Database = {
           raw_stage1?: string | null
           task_content?: string | null
           task_format?: string | null
+          task_title?: string | null
           teacher_notes?: string | null
           tokens_brief?: Json | null
           tokens_image?: Json | null
@@ -111,6 +113,7 @@ export type Database = {
           raw_stage1?: string | null
           task_content?: string | null
           task_format?: string | null
+          task_title?: string | null
           teacher_notes?: string | null
           tokens_brief?: Json | null
           tokens_image?: Json | null

@@ -52,29 +52,67 @@ export const generateTask = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const model =
       data.model === "gemini" ? "google/gemini-2.5-flash" : "anthropic/claude-sonnet-4.5";
+    const formatLabel = data.format || "";
+    const sys = data.systemPrompt
+      .replaceAll("{{subject}}", data.subject)
+      .replaceAll("{{grades}}", data.grade)
+      .replaceAll("{{grade}}", data.grade)
+      .replaceAll("{{topic}}", data.topic)
+      .replaceAll("{{title}}", data.topic)
+      .replaceAll("{{taskFormat}}", formatLabel)
+      .replaceAll("{{teacherRequest}}", data.additionalRequest || "")
+      .replaceAll("{{additionalRequest}}", data.additionalRequest || "");
     const userMsg = [
       `Предмет: ${data.subject}`,
-      `Класс/параллель: ${data.grade}`,
+      `Параллели: ${data.grade}`,
       `Тема: ${data.topic}`,
-      `Формат задания: ${data.format || "любой"}`,
-      `Дополнительный контекст: ${data.additionalRequest || "—"}`,
+      `Формат задания: ${formatLabel || "не указан — выбери сам"}`,
+      `Важно учесть: ${data.additionalRequest || "—"}`,
+      "",
+      "Сгенерируй задание строго по инструкции. Верни только JSON заданной схемы.",
     ].join("\n");
     const res = await callOpenRouter({
       model,
       messages: [
-        { role: "system", content: data.systemPrompt },
+        { role: "system", content: sys },
         { role: "user", content: userMsg },
       ],
-      response_format: { type: "json_object" },
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "task_generation_output",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              task_format: { type: "string" },
+              task: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  content: { type: "string" },
+                },
+                required: ["title", "content"],
+                additionalProperties: false,
+              },
+              teacher_notes: { type: "string" },
+            },
+            required: ["task_format", "task", "teacher_notes"],
+            additionalProperties: false,
+          },
+        },
+      },
     });
     const full: string = res?.choices?.[0]?.message?.content ?? "";
     const cleaned = full.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
     let task = "";
     let notes = "";
     let taskFormat = "";
+    let title = "";
     try {
       const parsed = JSON.parse(cleaned);
       taskFormat = String(parsed.task_format ?? "").trim();
+      title = String(parsed?.task?.title ?? "").trim();
       task = String(parsed?.task?.content ?? "").trim();
       notes = String(parsed?.teacher_notes ?? "").trim();
     } catch {
@@ -86,10 +124,12 @@ export const generateTask = createServerFn({ method: "POST" })
       task: task || "_Модель вернула пустое задание._",
       notes: notes || "_Заметки для учителя не были возвращены моделью._",
       taskFormat,
+      title,
       raw: full,
       usage: extractUsage(res),
     };
   });
+
 
 type GenBriefInput = {
   systemPrompt: string;
