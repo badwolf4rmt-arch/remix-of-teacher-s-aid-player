@@ -104,7 +104,8 @@ export const generateTask = createServerFn({ method: "POST" })
           },
         },
       },
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const full: string = res?.choices?.[0]?.message?.content ?? "";
     const cleaned = full.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
     let task = "";
