@@ -240,16 +240,21 @@ export const generateImage = createServerFn({ method: "POST" })
       .replaceAll("{{imageBrief}}", briefBlock)
       .replaceAll("{{additionalRequest}}", data.additionalRequest || "—");
 
-    const res = await callOpenRouter({
+    const requestBody = {
       model: "google/gemini-3.1-flash-image",
       messages: [{ role: "user", content: prompt }],
       modalities: ["image", "text"],
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const msg = res?.choices?.[0]?.message ?? {};
     const images: Array<{ image_url?: { url?: string } }> = msg.images ?? [];
     const url = images[0]?.image_url?.url;
     if (!url) {
       throw new Error("Модель не вернула изображение. " + (msg.content || "").slice(0, 300));
     }
-    return { imageUrl: url, usage: extractUsage(res) };
+    return {
+      imageUrl: url,
+      request: JSON.stringify(requestBody, null, 2),
+      usage: extractUsage(res),
+    };
   });
