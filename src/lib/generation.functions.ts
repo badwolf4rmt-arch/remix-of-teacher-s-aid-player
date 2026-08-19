@@ -73,7 +73,7 @@ export const generateTask = createServerFn({ method: "POST" })
       "",
       "Сгенерируй задание строго по инструкции. Верни только JSON заданной схемы.",
     ].join("\n");
-    const res = await callOpenRouter({
+    const requestBody = {
       model,
       messages: [
         { role: "system", content: sys },
