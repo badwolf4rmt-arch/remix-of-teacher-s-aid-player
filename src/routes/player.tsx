@@ -134,6 +134,7 @@ function PlayerPage() {
           });
           briefText = b.brief ?? "";
           setRawStage2(briefText);
+          setReqStage2(b.request ?? "");
           cBrief = b.usage?.cost ?? null;
           setCostBrief(cBrief);
 
