@@ -80,6 +80,9 @@ function PlayerPage() {
       setImageUrl(null);
       setRawStage1("");
       setRawStage2("");
+      setReqStage1("");
+      setReqStage2("");
+      setReqStage3("");
       setCostTask(null);
       setCostBrief(null);
       setCostImage(null);
