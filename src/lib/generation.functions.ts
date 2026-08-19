@@ -215,9 +215,14 @@ export const generateImageBrief = createServerFn({ method: "POST" })
           },
         },
       },
-    });
+    };
+    const res = await callOpenRouter(requestBody);
     const content: string = res?.choices?.[0]?.message?.content ?? "{}";
-    return { brief: content.trim(), usage: extractUsage(res) };
+    return {
+      brief: content.trim(),
+      request: JSON.stringify(requestBody, null, 2),
+      usage: extractUsage(res),
+    };
   });
 
 
