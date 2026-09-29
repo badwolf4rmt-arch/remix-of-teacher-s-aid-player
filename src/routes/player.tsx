@@ -7,21 +7,17 @@ import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayerToolbar } from "@/components/PlayerToolbar";
 import { RegenerateDialog } from "@/components/RegenerateDialog";
-import { EvaluationPanel } from "@/components/EvaluationPanel";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
-  DEFAULT_PROMPTS,
   loadModel,
   loadParams,
   loadPrompts,
   loadUser,
-  saveModel,
   saveUser,
   type ModelId,
-  type PromptSettings,
 } from "@/lib/playerState";
 import { TASK_FORMATS, type FormDraft, type TaskFormat } from "@/lib/catalogs";
 import {
@@ -42,7 +38,6 @@ type Stage = "idle" | "task" | "brief" | "image" | "done" | "error";
 function PlayerPage() {
   const [userName, setUserName] = useState("");
   const [model, setModel] = useState<ModelId>("claude");
-  const [prompts, setPrompts] = useState<PromptSettings>(DEFAULT_PROMPTS);
   const [params, setParams] = useState<FormDraft | null>(null);
   const [regenOpen, setRegenOpen] = useState(false);
 
@@ -199,7 +194,6 @@ function PlayerPage() {
     const pr = loadPrompts();
     const p = loadParams();
     setModel(m);
-    setPrompts(pr);
     setParams(p);
     if (p && !startedRef.current) {
       startedRef.current = true;
