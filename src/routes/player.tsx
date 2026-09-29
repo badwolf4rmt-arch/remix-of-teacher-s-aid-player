@@ -240,26 +240,12 @@ function PlayerPage() {
       <AppHeader
         userName={userName}
         onUserChange={(v) => { setUserName(v); saveUser(v); }}
-        model={model}
-        onModelChange={(v) => { setModel(v); saveModel(v); }}
-        prompts={prompts}
-        onPromptsChange={setPrompts}
       />
 
       <PlayerToolbar />
 
       <main className="mx-auto max-w-[1600px] px-6 py-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,2fr)_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <EvaluationPanel
-              userName={userName}
-              model={model}
-              params={params}
-              taskContent={taskContent}
-              teacherNotes={notesContent}
-            />
-          </aside>
-
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <section className="min-w-0">
             <div className="mb-4 flex items-center gap-4 border-b border-border/60 pb-4 text-sm">
               <span className="text-muted-foreground">{params?.subject || "Предмет"}</span>
