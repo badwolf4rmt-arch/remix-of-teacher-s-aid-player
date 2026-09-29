@@ -93,6 +93,7 @@ function PlayerPage() {
             topic: effective.topic,
             format: TASK_FORMATS.find((f) => f.id === effective.format)?.label ?? "любой",
             additionalRequest: effective.additionalRequest,
+            lessonPlan: effective.lessonPlan,
           },
         });
         setTaskContent(t.task);

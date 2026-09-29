@@ -62,6 +62,7 @@ export type FormDraft = {
   withIllustration: boolean;
   format: TaskFormat;
   additionalRequest: string;
+  lessonPlan: string;
 };
 
 export const DEFAULT_FORM: FormDraft = {
@@ -71,5 +72,6 @@ export const DEFAULT_FORM: FormDraft = {
   withIllustration: true,
   format: "any",
   additionalRequest: "",
+  lessonPlan: "",
 };
 

@@ -158,6 +158,17 @@ function ParamsPage() {
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">План урока</Label>
+            <Textarea
+              rows={6}
+              value={form.lessonPlan}
+              onChange={(e) => update({ lessonPlan: e.target.value })}
+              placeholder="Вставьте план урока (необязательно): цели, планируемые результаты, понятия, опорные знания, этапы… Задание подведёт к задачам урока, не дублируя его задания."
+              className="resize-none rounded-xl border-0 bg-[var(--surface-lavender)] px-4 py-3 text-sm shadow-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-3 pt-2">
             <Button
               type="button"
