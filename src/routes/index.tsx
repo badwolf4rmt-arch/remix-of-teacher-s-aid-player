@@ -23,15 +23,9 @@ import {
   type TaskFormat,
 } from "@/lib/catalogs";
 import {
-  DEFAULT_PROMPTS,
-  loadModel,
-  loadPrompts,
   loadUser,
-  saveModel,
   saveParams,
   saveUser,
-  type ModelId,
-  type PromptSettings,
 } from "@/lib/playerState";
 import { cn } from "@/lib/utils";
 
@@ -49,13 +43,9 @@ function ParamsPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormDraft>(DEFAULT_FORM);
   const [userName, setUserName] = useState("");
-  const [model, setModel] = useState<ModelId>("claude");
-  const [prompts, setPrompts] = useState<PromptSettings>(DEFAULT_PROMPTS);
 
   useEffect(() => {
     setUserName(loadUser());
-    setModel(loadModel());
-    setPrompts(loadPrompts());
   }, []);
 
   const canSubmit = !!(form.subject.trim() && form.grade.trim() && form.topic.trim());
@@ -69,10 +59,6 @@ function ParamsPage() {
       <AppHeader
         userName={userName}
         onUserChange={(v) => { setUserName(v); saveUser(v); }}
-        model={model}
-        onModelChange={(v) => { setModel(v); saveModel(v); }}
-        prompts={prompts}
-        onPromptsChange={setPrompts}
       />
 
       <div className="flex items-center justify-center px-4 py-10">
