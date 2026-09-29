@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +21,7 @@ import {
   type FormDraft,
   type TaskFormat,
 } from "@/lib/catalogs";
-import {
-  loadUser,
-  saveParams,
-  saveUser,
-} from "@/lib/playerState";
+import { saveParams } from "@/lib/playerState";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -42,11 +37,6 @@ function RequiredMark() {
 function ParamsPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormDraft>(DEFAULT_FORM);
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    setUserName(loadUser());
-  }, []);
 
   const canSubmit = !!(form.subject.trim() && form.grade.trim() && form.topic.trim());
 
@@ -56,11 +46,6 @@ function ParamsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader
-        userName={userName}
-        onUserChange={(v) => { setUserName(v); saveUser(v); }}
-      />
-
       <div className="flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-xl rounded-3xl bg-card p-8 shadow-2xl">
         <div className="mb-6 flex items-start justify-between">

@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { Braces, Loader2, Maximize2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { AppHeader } from "@/components/AppHeader";
 import { PlayerToolbar } from "@/components/PlayerToolbar";
 import { RegenerateDialog } from "@/components/RegenerateDialog";
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -16,7 +15,6 @@ import {
   loadParams,
   loadPrompts,
   loadUser,
-  saveUser,
   type ModelId,
   type PromptSettings,
 } from "@/lib/playerState";
@@ -37,7 +35,6 @@ export const Route = createFileRoute("/player")({
 type Stage = "idle" | "task" | "brief" | "image" | "done" | "error";
 
 function PlayerPage() {
-  const [userName, setUserName] = useState("");
   const [model, setModel] = useState<ModelId>("claude");
   const [params, setParams] = useState<FormDraft | null>(null);
   const [regenOpen, setRegenOpen] = useState(false);
@@ -190,7 +187,6 @@ function PlayerPage() {
   );
 
   useEffect(() => {
-    setUserName(loadUser());
     const m = loadModel();
     const pr = loadPrompts();
     const p = loadParams();
@@ -232,11 +228,6 @@ function PlayerPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader
-        userName={userName}
-        onUserChange={(v) => { setUserName(v); saveUser(v); }}
-      />
-
       <PlayerToolbar />
 
       <main className="mx-auto max-w-[1600px] px-6 py-8">
