@@ -46,6 +46,7 @@ type GenTaskInput = {
   topic: string;
   format: string;
   additionalRequest: string;
+  lessonPlan?: string;
 };
 
 export const generateTask = createServerFn({ method: "POST" })
@@ -54,7 +55,7 @@ export const generateTask = createServerFn({ method: "POST" })
     const model =
       data.model === "gemini" ? "google/gemini-2.5-flash" : "anthropic/claude-sonnet-4.5";
     const formatLabel = data.format || "";
-    const sys = data.systemPrompt
+    let sys = data.systemPrompt
       .replaceAll("{{subject}}", data.subject)
       .replaceAll("{{grades}}", data.grade)
       .replaceAll("{{grade}}", data.grade)
@@ -63,6 +64,15 @@ export const generateTask = createServerFn({ method: "POST" })
       .replaceAll("{{taskFormat}}", formatLabel)
       .replaceAll("{{teacherRequest}}", data.additionalRequest || "")
       .replaceAll("{{additionalRequest}}", data.additionalRequest || "");
+    const lessonPlan = (data.lessonPlan ?? "").trim();
+    if (lessonPlan) {
+      sys = sys
+        .replaceAll("{{lessonPlan}}", lessonPlan)
+        .replaceAll("<<<LESSON_PLAN>>>", "")
+        .replaceAll("<<<END_LESSON_PLAN>>>", "");
+    } else {
+      sys = sys.replace(/<<<LESSON_PLAN>>>[\s\S]*?<<<END_LESSON_PLAN>>>/g, "");
+    }
     const userMsg = [
       `Предмет: ${data.subject}`,
       `Параллели: ${data.grade}`,
