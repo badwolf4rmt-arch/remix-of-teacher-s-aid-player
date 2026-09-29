@@ -7,18 +7,15 @@ import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayerToolbar } from "@/components/PlayerToolbar";
 import { RegenerateDialog } from "@/components/RegenerateDialog";
-import { EvaluationPanel } from "@/components/EvaluationPanel";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
-  DEFAULT_PROMPTS,
   loadModel,
   loadParams,
   loadPrompts,
   loadUser,
-  saveModel,
   saveUser,
   type ModelId,
   type PromptSettings,
@@ -42,7 +39,6 @@ type Stage = "idle" | "task" | "brief" | "image" | "done" | "error";
 function PlayerPage() {
   const [userName, setUserName] = useState("");
   const [model, setModel] = useState<ModelId>("claude");
-  const [prompts, setPrompts] = useState<PromptSettings>(DEFAULT_PROMPTS);
   const [params, setParams] = useState<FormDraft | null>(null);
   const [regenOpen, setRegenOpen] = useState(false);
 
@@ -199,7 +195,6 @@ function PlayerPage() {
     const pr = loadPrompts();
     const p = loadParams();
     setModel(m);
-    setPrompts(pr);
     setParams(p);
     if (p && !startedRef.current) {
       startedRef.current = true;
@@ -221,7 +216,7 @@ function PlayerPage() {
       "",
       "Предыдущее задание используй только как контекст, при необходимости измени формат.",
     ].join("\n");
-    void runPipeline(params, model, prompts, { ...opts, additionalRequest: wrapped });
+    void runPipeline(params, model, loadPrompts(), { ...opts, additionalRequest: wrapped });
   };
 
   const formatLabel =
@@ -240,26 +235,12 @@ function PlayerPage() {
       <AppHeader
         userName={userName}
         onUserChange={(v) => { setUserName(v); saveUser(v); }}
-        model={model}
-        onModelChange={(v) => { setModel(v); saveModel(v); }}
-        prompts={prompts}
-        onPromptsChange={setPrompts}
       />
 
       <PlayerToolbar />
 
       <main className="mx-auto max-w-[1600px] px-6 py-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,2fr)_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <EvaluationPanel
-              userName={userName}
-              model={model}
-              params={params}
-              taskContent={taskContent}
-              teacherNotes={notesContent}
-            />
-          </aside>
-
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <section className="min-w-0">
             <div className="mb-4 flex items-center gap-4 border-b border-border/60 pb-4 text-sm">
               <span className="text-muted-foreground">{params?.subject || "Предмет"}</span>
