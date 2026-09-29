@@ -18,6 +18,7 @@ import {
   loadUser,
   saveUser,
   type ModelId,
+  type PromptSettings,
 } from "@/lib/playerState";
 import { TASK_FORMATS, type FormDraft, type TaskFormat } from "@/lib/catalogs";
 import {
@@ -215,7 +216,7 @@ function PlayerPage() {
       "",
       "Предыдущее задание используй только как контекст, при необходимости измени формат.",
     ].join("\n");
-    void runPipeline(params, model, prompts, { ...opts, additionalRequest: wrapped });
+    void runPipeline(params, model, loadPrompts(), { ...opts, additionalRequest: wrapped });
   };
 
   const formatLabel =
