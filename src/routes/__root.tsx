@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -35,7 +36,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -93,8 +94,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Стенд генерации мотивирующих заданий" },
       { name: "twitter:description", content: "Внутренний стенд для тестирования: задание параметров, плеер контента с markdown/LaTeX и панель оценивания." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6984d42d-f354-4e70-9394-fc8f734470e2/id-preview-aea164ed--c603e1c5-b34c-4f40-a729-fdfd4277efcc.lovable.app-1783924853236.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6984d42d-f354-4e70-9394-fc8f734470e2/id-preview-aea164ed--c603e1c5-b34c-4f40-a729-fdfd4277efcc.lovable.app-1783924853236.png" },
     ],
     links: [
       {

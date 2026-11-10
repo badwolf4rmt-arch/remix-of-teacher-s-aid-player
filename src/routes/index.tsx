@@ -25,6 +25,16 @@ import { saveParams } from "@/lib/playerState";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Параметры мотивирующего задания — Teach Assist" },
+      { name: "description", content: "Создайте мотивирующее задание по предмету, классу и теме с учетом плана урока." },
+      { property: "og:title", content: "Параметры мотивирующего задания — Teach Assist" },
+      { property: "og:description", content: "Создайте мотивирующее задание с учетом темы и плана урока." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ParamsPage,
 });
 
