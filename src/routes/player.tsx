@@ -28,7 +28,16 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/player")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Плеер контента — стенд" }] }),
+  head: () => ({
+    meta: [
+      { title: "Задание и заметки для учителя — Teach Assist" },
+      { name: "description", content: "Мотивирующее задание, иллюстрация и методические заметки для проведения урока." },
+      { property: "og:title", content: "Задание и заметки для учителя — Teach Assist" },
+      { property: "og:description", content: "Просмотр задания, иллюстрации и заметок для учителя." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: PlayerPage,
 });
 
